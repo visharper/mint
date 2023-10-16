@@ -1,0 +1,1 @@
+export const apiEndpoint = "vishal.api.home:8000"
