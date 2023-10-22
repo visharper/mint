@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import { Button } from '@chakra-ui/react'
-import {SIGNAL_CONF} from "../common"
+import {SIGNAL_CONF} from "../../common"
 
 function Signal(props) {
     const {Columns, DataRows, Type} = props

@@ -3,8 +3,10 @@ import { createSlice } from '@reduxjs/toolkit'
 export const watchListSlice = createSlice({
   name: 'watchList',
   initialState: {
-    watchList: ["XOM"],
-    period: "1wk"
+    watchList: ["NVDA"],
+    period: "1d",
+    ticker: "NVDA",
+    interval: "1d"
   },
   reducers: {
     addTickerToWatchList: (state, action) => {
@@ -20,6 +22,10 @@ export const watchListSlice = createSlice({
             watchList: filteredList
         }
     },
+    addTickerToBackTest: (state, action) => {
+      console.log(state, action.payload)
+      state.watchList.ticker = action.payload.ticker
+      },
     changeInvPeriod : (state, action) => {
         // console.log(state, action)
       state = {
@@ -27,9 +33,15 @@ export const watchListSlice = createSlice({
         period : action.payload.period
       }
       console.log("AFter Change:>>>>>> ", state.period)
+    },
+    changeIntervalForBacktest : (state, action) => {
+      state = {
+        ...state,
+        interval : action.payload.interval
+      }
     }
 }})
 
-export const {addTickerToWatchList, removeTickerToWatchList, changeInvPeriod} = watchListSlice.actions
+export const {addTickerToWatchList, removeTickerToWatchList, changeInvPeriod, addTickerToBackTest, changeIntervalForBacktest} = watchListSlice.actions
 
 export default watchListSlice.reducer

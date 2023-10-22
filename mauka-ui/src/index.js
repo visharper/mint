@@ -8,13 +8,14 @@ import HomePage from './pages/Home';
 import WatchListPage from './pages/WatchList';
 import { Provider } from 'react-redux'
 import { store } from './redux'
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider , extendTheme} from '@chakra-ui/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Theme from "./theme"
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import BackTest from './pages/BackTest';
 // // const root = ReactDOM.createRoot(document.getElementById('root'));
 // const routes = () => (
 //   <React.StrictMode>
@@ -63,11 +64,15 @@ import {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <WatchListPage />,
+    element: <HomePage />,
   },
   {
     path: "watch",
     element: <WatchListPage />,
+  },
+  {
+    path: "backtest",
+    element: <BackTest />,
   },
 ]);
 
@@ -77,12 +82,12 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   clientId="MXKOcj0ExB5cyfuMPFLsl9q40Hes6153"
   redirectUri={window.location.origin}
   >
-  <React.StrictMode>
-       <Provider store={store}>
-       <ChakraProvider theme={Theme}>
-    <RouterProvider router={router} />
-    </ChakraProvider>
-  </Provider>
-  </React.StrictMode>
+    <React.StrictMode>
+      <Provider store={store}>
+        <ChakraProvider  theme={Theme}>
+          <RouterProvider router={router} />
+        </ChakraProvider>
+      </Provider>
+    </React.StrictMode>
   </Auth0Provider>
 );

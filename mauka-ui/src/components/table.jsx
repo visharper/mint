@@ -1,5 +1,5 @@
 import React from 'react';
-import Signal from './signal';
+import Signal from './signal/Signal';
 import {COLS_TO_PUBLISH} from "../common"
 import {
     Table,

@@ -1,1 +1,1 @@
-export * from "./watchList"
+export * from "../reducers"
