@@ -1,47 +1,78 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, current } from "@reduxjs/toolkit";
+import { handleSignalFilters } from ".";
 
 export const watchListSlice = createSlice({
-  name: 'watchList',
+  name: "watchList",
   initialState: {
-    watchList: ["NVDA"],
+    watchList: [],
     period: "1d",
-    ticker: "NVDA",
-    interval: "1d"
+    ticker: "",
+    interval: "1d",
+    signalFilters: "",
+    // signalFilters: [
+    //   { key: "message_type", value: ["Bullish"] },
+    //   {
+    //     key: "time_range",
+    //     value: ["1d"],
+    //   },
+    //   {
+    //     key: "ticker",
+    //     value: ["WMT", "GPS"],
+    //   },
+    // ],
   },
   reducers: {
     addTickerToWatchList: (state, action) => {
-        console.log(state, action.payload)
-        const ticker = action.payload.ticker
-            state.watchList.push(ticker)
-        },
-   removeTickerToWatchList : (state, action) => {
-        const ticker = action.payload.ticker
-        const filteredList = state.watchList.filter( symbol => symbol !== ticker )
-        state = {
-            ...state,
-            watchList: filteredList
-        }
+      console.log(state, action.payload);
+      const ticker = action.payload.ticker;
+      state.watchList.push(ticker);
+    },
+    removeTickerToWatchList: (state, action) => {
+      const ticker = action.payload.ticker;
+      const filteredList = state.watchList.filter(
+        (symbol) => symbol !== ticker
+      );
+      state = {
+        ...state,
+        watchList: filteredList,
+      };
     },
     addTickerToBackTest: (state, action) => {
-      console.log(state, action.payload)
-      state.watchList.ticker = action.payload.ticker
-      },
-    changeInvPeriod : (state, action) => {
-        // console.log(state, action)
-      state = {
-        ...state,
-        period : action.payload.period
-      }
-      console.log("AFter Change:>>>>>> ", state.period)
+      console.log(state, action.payload);
+      state.watchList.ticker = action.payload.ticker;
     },
-    changeIntervalForBacktest : (state, action) => {
+    changeInvPeriod: (state, action) => {
+      console.log(state, action);
       state = {
         ...state,
-        interval : action.payload.interval
-      }
-    }
-}})
+        period: action.payload.period,
+      };
+    },
+    changeIntervalForBacktest: (state, action) => {
+      console.log(state, action);
+      state = {
+        ...state,
+        interval: action.payload.interval,
+      };
+    },
+    setSignalFilters: (state, { payload }) => {
+      // const oldFilters = current(state.signalFilters) || "";
+      // const filters = handleSignalFilters(oldFilters, payload);
+      state = {
+        ...state,
+        signalFilters: payload.value,
+      };
+    },
+  },
+});
 
-export const {addTickerToWatchList, removeTickerToWatchList, changeInvPeriod, addTickerToBackTest, changeIntervalForBacktest} = watchListSlice.actions
+export const {
+  addTickerToWatchList,
+  removeTickerToWatchList,
+  changeInvPeriod,
+  addTickerToBackTest,
+  changeIntervalForBacktest,
+  setSignalFilters,
+} = watchListSlice.actions;
 
-export default watchListSlice.reducer
+export default watchListSlice.reducer;

@@ -1,24 +1,28 @@
 import React, {useState} from "react";
-import { Button } from '@chakra-ui/react'
-import {SIGNAL_CONF} from "../../common"
+import { Button, Text } from '@chakra-ui/react'
+import {TREND_CONF} from "../../common"
 
 function Signal(props) {
-    const {Columns, DataRows, Type} = props
+    const {RowJSON, Column, Type} = props
     const [color, setColor] = useState("")
-    const [trend, setTrend] = useState("")
+    const [value, setValue] = useState("")
     React.useEffect(()=>{
-        const colLoc = Columns.indexOf(Type)
-        if (colLoc > 0){
-            const signal = DataRows[colLoc]
-            const dataConf = SIGNAL_CONF[signal]
-            setColor(dataConf.color)
-            setTrend(dataConf.trend)
+        const colValue = RowJSON[Column]
+        const dataConf = TREND_CONF[colValue]
+        if (dataConf !== undefined && Object.keys(dataConf).length > 0)
+        {setColor(dataConf.color)
+            setValue(colValue)
         }
-    })
+        else{
+            setValue(colValue)
+        }
+
+    },[RowJSON])
     return(<div>
-        {color && <Button 
-            colorScheme={color}>{trend}
-         </Button>}
+        {color ? <Button 
+            colorScheme={color}>{value}
+         </Button>
+         : <Text> {value}</Text>}
           </div>)
 }
 

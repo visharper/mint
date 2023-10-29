@@ -14,7 +14,10 @@ function Header() {
         setIsDark(!isDark)
     }
     return( 
-        <Flex minWidth='max-content' alignItems='center'>
+        <Flex 
+            minWidth='max-content' 
+            alignItems='center'
+            >
             <Spacer />
             <MenuBar/>
             <IconButton 

@@ -23,14 +23,16 @@ import {
 import {addTickerToWatchList} from "../../redux/actions"
 
 function SignalComp(props) {
+    const {Index, Active} = props
     const sampleData = [{"create_date": "2023-10-02T13:30:00Z", "ticker": "vis", "category": "RSI", "message": "Test Message", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-12T01:00:00.200000Z", "ticker": "vis", "category": "RSI", "message": "Test Message", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T16:10:24.936827Z", "ticker": "NVDA", "category": "RSI", "message": "TEST RSI MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T16:13:34.795442Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:15:41.081114Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:16:05.286742Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:17:03.115969Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:20:33.807084Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:21:00.472935Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:21:05.080184Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:21:07.617016Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:21:09.583076Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:21:12.070503Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:21:14.421914Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:21:49.519668Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:21:51.883347Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:21:54.267124Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:22:26.214258Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:22:39.729143Z", "ticker": "TSLA", "category": "PRICE", "message": "TEST Price MEssage", "message_type": "Bullish", "time_range": "1m"}, {"create_date": "2023-10-15T17:26:51.589415Z", "ticker": "TSLA", "category": "price", "message": "Buy", "message_type": "Bullish", "time_range": "1d"}, {"create_date": "2023-10-15T17:26:59.260171Z", "ticker": "TSLA", "category": "price", "message": "Buy", "message_type": "Bullish", "time_range": "1d"}, {"create_date": "2023-10-15T17:27:07.815673Z", "ticker": "TSLA", "category": "price", "message": "Buy", "message_type": "Bullish", "time_range": "1d"}, {"create_date": "2023-10-15T17:27:56.504392Z", "ticker": "TSLA", "category": "price", "message": "Buy", "message_type": "Bullish", "time_range": "1d"}, {"create_date": "2023-10-15T17:28:41.132825Z", "ticker": "TSLA", "category": "price", "message": "Buy", "message_type": "Bullish", "time_range": "1d"}, {"create_date": "2023-10-15T17:30:40.015508Z", "ticker": "TSLA", "category": "price", "message": "Buy", "message_type": "Bullish", "time_range": "1d"}, {"create_date": "2023-10-15T17:30:45.868696Z", "ticker": "TSLA", "category": "price", "message": "Buy", "message_type": "Bullish", "time_range": "1d"}]
     const store = useSelector(state=> state.watchList)
-    const watchList = store.watchList || []
+    const { signalFilters}  = store
+    const watchList = store.watchList || ["NVDA"]
     const [input, setInput] = useState('')
     const [tableData, setTableData] = useState({})
     const [isInvalid, setIsInvalid] = useState(()=> false)
     const [isLoading, setIsLoading] = useState(()=>false)
-    const [signalData, setSignalData] = useState([])
+    const [signalData, setSignalData] = useState(()=>[])
     const [period, setPeriod] = useState(store.period)
     const dispatch = useDispatch()
 
@@ -55,13 +57,14 @@ function SignalComp(props) {
     }
   
     React.useEffect(()=>{
-
         async function fetchData(symbols, range){
             const signalDataResp = await getSignalData()
             signalDataResp && setSignalData(signalDataResp)
         }
-        watchList.length > 0 && fetchData(watchList, period) 
-    }, [watchList, period]
+        // Fetch Data only when Signal tab is Active
+        Active === Index && fetchData(watchList, period) 
+        
+    }, [watchList, period, Active]
     )
 
     return(
@@ -75,12 +78,12 @@ function SignalComp(props) {
 
     </Box>
 
-    {signalData &&<SignalTable Data={signalData}/>}
-        {
+    {Object.keys(signalData).length > 0  &&<SignalTable Data={signalData} Filter={signalFilters}/>}
+        {/* {
             Object.keys(tableData).length > 0 ? <DataTableComp 
                 TickersData={tableData}/> : 
                 <Progress size='xs' isIndeterminate />
-        }
+        } */}
         </Box>
 
     )

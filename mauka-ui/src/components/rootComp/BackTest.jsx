@@ -11,6 +11,7 @@ import ResearchButton from "../researchBtn";
 import DatePicker from "react-datepicker";
 import { DEFAULT_TIME_FMT , changeDateFmt} from "../../common/moment";
 import { Code } from '@chakra-ui/react'
+import {CustomShapeBarChart} from "../backtest/CustomShapeBarChart"
 import {
     FormControl,
     FormLabel,
@@ -27,6 +28,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 
 function BackTest(props) {
+    const {Index, Active} = props
     const store = useSelector(state=> state.watchList)
     const watchList = store.watchList
     const ticker = store && store.ticker || "NVDA"
@@ -38,7 +40,7 @@ function BackTest(props) {
     const [backtestData, setBackTestData] = useState("Your Data Will Display Here")
     const [isInvalid, setIsInvalid] = useState(()=> false)
     const [isLoading, setIsLoading] = useState(()=>false)
-    const [interval, setInterval] = useState(store.interval || "1d")
+    const [interval, setInterval] = useState(store.interval)
     const dispatch = useDispatch()
     const handleChange = (event) => setValue(event.target.value)
 
@@ -46,35 +48,46 @@ function BackTest(props) {
     const handleDateChange = (dt) => console.log(" Date Changed  : ", dt)
     const onSubmitHandler = () => {
         if (value){
+            console.log("Sumit Handler has interval : ", interval)
             setInput(value)
-            fetchData([value], interval)
+            fetchData([value], startDate, endDate, interval)
         }
     }
 
     const onIntervalChange = (value) => {
         setTableData({})
         dispatch(changeIntervalForBacktest({interval: value}))
+        console.log("Interval Changed : ", value)
         setInterval(value)
     }
+
     const prepareBackTestResult = (data) =>{
         const divs = backtestData.split("\\n").map((i,key) => <><div style={{whiteSpace: 'pre-line'}}  key={key}>{i}</div><br/></>)
         return divs
     }
     async function fetchData(symbols, startDate, endDate, range){
+        console.log("Fetch Data has interval : ", range)
         setBackTestData("")
         setTableData({})
         const resp = await getBackTestData(symbols,startDate="", endDate="", range)
-        console.log(resp["backtest_data"])
-        const respBacktest = resp["backtest_data"] || ""
-
+        if(resp === undefined) {
+            return 0
+        }
+        const respBacktest = resp !== undefined ? resp["backtest_data"] : ""
         console.log(typeof(respBacktest), respBacktest.split("\\n"))
         const parsedData =  JSON.parse(resp["ticker_data"])
         parsedData.length > 0 &&  setTableData(parsedData) 
         setBackTestData(respBacktest)
     }
+
     React.useEffect(()=>{
-        ticker && fetchData([input], startDate, endDate, interval) 
-    }, [Input, interval, startDate, endDate]
+        console.log("Interval Changed : ", interval)
+
+        if (Active === Index){
+            console.log("Interval To pull Data is : ", interval)
+            ticker && fetchData([input], startDate, endDate, interval) 
+        }
+    }, [Input, interval, startDate, endDate, Active]
     )
 
     return(
@@ -82,7 +95,7 @@ function BackTest(props) {
         <Box>
             <FormControl isRequired>
             <FormLabel>Back Test Strategy</FormLabel>
-            <HStack spacing='1.5rem'>
+            <HStack pb='1rem'>
             <Box>
                 <Input 
                         placeholder='Ticker' 
@@ -94,17 +107,6 @@ function BackTest(props) {
             <Box w='20vw' h='2rem'>
                 <RadioButtons Value={interval} Params={periodButtonConf} OnChange={onIntervalChange}/>
             </Box>
-            <Box w='20vw' h='40px'>
-                <Button 
-                isLoading={isLoading} 
-                onClick={onSubmitHandler}
-                colorScheme='teal' 
-                size='md'> Submit
-            </Button>
-            </Box>
-
-            </HStack>
-            <HStack>
             <Text>Start Date: </Text><DatePicker 
                 selected={startDate} 
                 onChange={(date) => setStartDate(date)} 
@@ -114,11 +116,23 @@ function BackTest(props) {
                 selected={endDate} 
                 onChange={(date) => setEndDate(date)} 
             />
+            <Button 
+                variant="brandPrimary"
+                isLoading={isLoading} 
+                onClick={onSubmitHandler}
+                // colorScheme='teal' 
+                // size='md'
+                > Submit
+            </Button>
             </HStack>
-            {tableData && tableData.length > 0 ?
+            
+            {/* {tableData && tableData.length > 0 ?
              <BacktestChart Interval={interval} Data={tableData}/> 
              : <Progress size='sm' isIndeterminate />
-            }
+            } */}
+            {tableData && tableData.length > 0 
+            ? <CustomShapeBarChart Interval={interval} Data={tableData} /> 
+            : <Progress size='sm' isIndeterminate />}
            
         </FormControl>
         <div>

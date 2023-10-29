@@ -2,8 +2,6 @@ import React from 'react'
 import moment from "moment"
 import {LineChart,Scatter,ReferenceLine,
    ComposedChart, Line, XAxis, Legend, Tooltip, ResponsiveContainer, YAxis} from "recharts"
-// import {CustomShapeBarChart} from "../  backtest/CustomShapeBarChart"
-import {CustomShapeBarChart} from "./backtest/CustomShapeBarChart"
 
 export default function BacktestChart(props) {
     const {Interval, Data} = props
@@ -46,14 +44,13 @@ export default function BacktestChart(props) {
     <ResponsiveContainer width="80%" height="60%">
       <ComposedChart width={800} height={600} data={Data}>
     {/* <LineChart width={800} height={600} data={data}> */}
-        {/* <Line
+        <Line
         type="monotone"
         dataKey={"Close"}
         // stroke='red'
         // strokeWidth={3}
         // dot={<CustomizedDot value={data}/>}
-        /> */}
-        <CustomShapeBarChart Interval={Interval} Data={Data} />
+        />
         <Scatter 
           // dataKey="BuyValue" 
           dataKey={(v)=>v.BuyValue ? v.BuyValue : parseInt(v.Open/2)}
