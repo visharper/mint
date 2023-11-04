@@ -7,6 +7,7 @@ import { colorSchemes } from "./theme/colorSchemes";
 import { tabsScheme } from "./theme/tabsScheme";
 import { buttonTheme } from "./theme/buttonTheme";
 import { tableTheme } from "./theme/tableTheme";
+import { iconButtonTheme } from "./theme/iconTheme";
 
 const borderRadius = {
   radii: {
@@ -28,13 +29,15 @@ const Theme = extendTheme(
     fonts: {
       heading: `'Open Sans', sans-serif`,
       body: `Tahoma`,
+      size: "0.8rem",
     },
     components: {
-      Tabs: tabsScheme,
       Button: buttonTheme,
+      Tabs: tabsScheme,
       Table: tableTheme,
     },
   }
+  // IconButton: iconButtonTheme,
   // withDefaultColorScheme({
   //   colorScheme: colorSchemes,
   // }),

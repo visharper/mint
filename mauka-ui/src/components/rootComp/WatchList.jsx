@@ -8,7 +8,6 @@ import RadioButtons from "../radio";
 import { changeInvPeriod } from '../../redux/reducers'
 import RemoveTickerBtn from "../removeTicker";
 import ResearchButton from "../researchBtn";
-// import SignalTable from "./signal/SignalTable";
 
 import {
     FormControl,
@@ -72,6 +71,7 @@ function WatchList(props) {
     return(
       <Box>
         <Box>
+        <i>*Trends are subject to change on upcoming News, Mergers and Earnings!!!</i>
             <FormControl isRequired>
             <FormLabel>Watch List</FormLabel>
             <HStack spacing='24px'>
@@ -100,7 +100,6 @@ function WatchList(props) {
 
     </Box>
 
-    {/* {signalData &&<SignalTable Data={signalData}/>} */}
         {
             Object.keys(tableData).length > 0 ? <DataTableComp 
                 TickersData={tableData}

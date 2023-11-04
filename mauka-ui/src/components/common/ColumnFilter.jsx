@@ -1,28 +1,32 @@
-import { Input } from '@chakra-ui/react'
-import React , {useState, useEffect} from 'react'
-import { useDispatch } from 'react-redux'
+import { Input } from "@chakra-ui/react";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { setSignalFilters } from "../../redux/reducers";
 
 function ColumnFilter(props) {
-  const {ColumnName} = props
-  const [value, setValue] = React.useState('')
-  const dispatch = useDispatch()
+  const { ColumnName } = props;
+  const [value, setValue] = React.useState("");
+  const dispatch = useDispatch();
   const handleChange = (event) => {
-    const fieldValue = event.target.value
-    setValue(fieldValue) 
-    dispatch(setSignalFilters({field: ColumnName, value: fieldValue.replace(" ", "").split(",")}))
-  }
-  
+    const fieldValue = event.target.value;
+    dispatch(
+      setSignalFilters({
+        field: ColumnName,
+        value: fieldValue.replace(" ", "").split(","),
+      })
+    );
+    setValue(fieldValue);
+  };
+
   return (
-      <Input
-      placeholder='Apply Filter'
-      size='sm'
+    <Input
+      placeholder="Apply Filter"
+      size="sm"
       onChange={handleChange}
-      value = {value}
-      _placeholder={{ color: 'brand.800' }}
-      >
-      </Input>
-  )
+      value={value}
+      _placeholder={{ color: "brand.800" }}
+    ></Input>
+  );
 }
 
-export default ColumnFilter
+export default ColumnFilter;

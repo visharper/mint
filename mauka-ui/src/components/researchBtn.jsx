@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 export class ResearchButton extends Component {
   render() {
     return (
-        <IconButton icon={<SearchIcon/>}></IconButton>
+        <Button><IconButton isRound={true} icon={<SearchIcon/>}></IconButton></Button>
     )
   }
 }

@@ -35,7 +35,7 @@ export const TREND_CONF = {
     rating: "Buy",
     trend: "Bullish",
   },
-  BEARISH: {
+  Bearish: {
     color: "red",
     rating: "Sell",
     trend: "Bearish",

@@ -11,6 +11,7 @@ import {
     TableCaption,
     TableContainer,
     Box,
+    HStack,
   } from '@chakra-ui/react'
 import ResearchButton from './researchBtn';
 import RemoveTickerBtn from './removeTicker';
@@ -31,7 +32,8 @@ function DataTableComp(props) {
         const rowsHtml = data.map((row, index)=> {
             return (<Tr key={index}>
             {prepareRowCells(row)}
-            <Td><RemoveTickerBtn/>
+            <Td>
+              <RemoveTickerBtn/>
             <ResearchButton/></Td>
             </Tr>)
         })
@@ -39,25 +41,22 @@ function DataTableComp(props) {
     }
 
     return(
-        <>
-           <TableContainer>
-                <Table colorScheme='teal'>
-            <TableCaption>
-              <i>*Trends are subject to change on upcoming News, Mergers and Earnings!!!</i>
-            </TableCaption>
-            <Thead>
-      <Tr>
-        {prepareTableHeaders()}
-        {Actions && <Th ></Th>}
-      </Tr>
-    </Thead>
-    <Tbody>
-        {prepareTableRows(tickersData)}
-    </Tbody>
-            </Table>
-    </TableContainer>
-        </>
-
+          <TableContainer>
+              <Table>
+                <TableCaption>
+                  <i>*Trends are subject to change on upcoming News, Mergers and Earnings!!!</i>
+                </TableCaption>
+              <Thead>
+                <Tr>
+                  {prepareTableHeaders()}
+                  {Actions && <Th ></Th>}
+                </Tr>
+              </Thead>
+                <Tbody>
+                    {prepareTableRows(tickersData)}
+                </Tbody>
+              </Table>
+          </TableContainer>
     )   
 }
 export default DataTableComp

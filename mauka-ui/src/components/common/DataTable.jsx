@@ -1,5 +1,15 @@
 import * as React from "react";
-import { Table, Thead, Tbody, Tr, Th, Td, chakra, Input } from "@chakra-ui/react";
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  chakra,
+  Input,
+  Text,
+} from "@chakra-ui/react";
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import {
   useReactTable,
@@ -8,18 +18,15 @@ import {
   ColumnDef,
   SortingState,
   getSortedRowModel,
-  useGlobalFilter
+  useGlobalFilter,
 } from "@tanstack/react-table";
-import ColumnFilter from "./ColumnFilter"
-import "./DataTable.css"
+// import { useDispatch } from "react-redux";
+// import ColumnFilter from "./ColumnFilter";
+import "./DataTable.css";
 
-export function DataTable({
-  data,
-  columns,
-  RowsCount
-}) {
+export function DataTable({ data, columns, RowsCount }) {
   const [sorting, setSorting] = React.useState([]);
-  const [columnsDef, setColumnsDef] = React.useState(()=>columns)
+  const [columnsDef, setColumnsDef] = React.useState(() => columns);
   const table = useReactTable({
     columns,
     data,
@@ -27,12 +34,14 @@ export function DataTable({
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     state: {
-      sorting
-    }
+      sorting,
+    },
   });
-  const applyFilter = (e) => {
-    console.log("Filter APplied : ", e.target.value)
-  }
+  // const applyFilter = (e) => {
+  //   console.log("Filter APplied : ", e.target.value);
+  //   // const dispatch = useDispatch();
+  //   // dispatch(setSignalFilters(e.target.value));
+  // };
 
   return (
     <Table variant="brandTable">
@@ -44,7 +53,6 @@ export function DataTable({
               const meta = header.column.columnDef.meta;
               return (
                 <Th
-                  textColor="brand.200"
                   key={header.id}
                   onClick={header.column.getToggleSortingHandler()}
                   isNumeric={meta?.isNumeric}
@@ -53,9 +61,8 @@ export function DataTable({
                     header.column.columnDef.header,
                     header.getContext()
                   )}
-                  
 
-                  <chakra.span pl="4">
+                  <chakra.span>
                     {header.column.getIsSorted() ? (
                       header.column.getIsSorted() === "desc" ? (
                         <TriangleDownIcon aria-label="sorted descending" />
@@ -63,13 +70,15 @@ export function DataTable({
                         <TriangleUpIcon aria-label="sorted ascending" />
                       )
                     ) : null}
-                    <span>{RowsCount}</span>
-                    {header.column.columnDef.isFilter && 
-                    <ColumnFilter 
-                      ColumnName={header.column.columnDef.field}
-                      FilterFn={applyFilter}
-                    />}
-
+                    <chakra.span size="sm" p="2">
+                      ({RowsCount})
+                    </chakra.span>
+                    {/* {header.column.columnDef.isFilter && (
+                      <ColumnFilter
+                        ColumnName={header.column.columnDef.field}
+                        FilterFn={applyFilter}
+                      />
+                    )} */}
                   </chakra.span>
                 </Th>
               );

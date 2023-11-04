@@ -58,10 +58,13 @@ export const watchListSlice = createSlice({
     setSignalFilters: (state, { payload }) => {
       // const oldFilters = current(state.signalFilters) || "";
       // const filters = handleSignalFilters(oldFilters, payload);
+      console.log("Updating State to : ", payload);
+
       state = {
         ...state,
-        signalFilters: payload.value,
+        signalFilters: payload,
       };
+      console.log("Update State to : ", state.signalFilters);
     },
   },
 });

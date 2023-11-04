@@ -30,7 +30,7 @@ const baseStyle = definePartsStyle({
     borderColor: "#85bb65",
   },
   heading: {
-    bg: "emerald.bg",
+    bg: "brand.highlight.100",
   },
 });
 

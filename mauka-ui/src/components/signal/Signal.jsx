@@ -19,9 +19,9 @@ function Signal(props) {
 
     },[RowJSON])
     return(<div>
-        {color ? <Button 
-            colorScheme={color}>{value}
-         </Button>
+        {color ? <Text 
+            color={color}>{value}
+         </Text>
          : <Text> {value}</Text>}
           </div>)
 }
