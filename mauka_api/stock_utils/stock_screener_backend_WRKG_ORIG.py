@@ -21,15 +21,6 @@ from mauka_api.stock_utils.utils.date_util import (
 from mauka_api.stock_utils.utils.yfinance_util import download_data
 from mauka_api.stock_utils.signal import Signal
 from mauka_api.stock_utils.utils.technicals_utils import get_macd, get_rsi_timeseries
-from mauka_api import (
-    # Signal DB Enums
-    SIGNAL_CATEGORY,
-    SIGNAL_MESSAGE,
-    SIGNAL_MESSAGE_TYPE,
-    SIGNAL_TICKER,
-    SIGNAL_TIME_RANGE,
-)
-from mauka_api.stock_utils import store_message, update_trend, MAUKA_EMAIL
 
 
 class CachedLimiterSession(CacheMixin, LimiterMixin, Session):
@@ -147,20 +138,14 @@ def fetch_data(tickers: list, start_date, end_date, interval="1d"):
     for ticker in tickers:
         try:
             df = download_data(ticker, start_date, end_date, interval)
-            # print(df)
+            print(df)
             prepare_ema_smas(df)
             get_rsi_timeseries(df, 3)
             get_rsi_timeseries(df, 12)
             get_macd(df, "Close", 26, 12, 9)
             signal = Signal(ticker, interval)
             price_msg = signal.price_action(df)
-            # print(ticker, " Price Msg : ", price_msg)
-            # if price_msg.get(SIGNAL_MESSAGE_TYPE, ""):
-            #     store_message(price_msg)
             rsi_msg = signal.rsi(df)
-            # print(ticker, " RSI Msg : ", rsi_msg)
-            # if rsi_msg.get(SIGNAL_MESSAGE_TYPE, ""):
-            #     store_message(rsi_msg)
 
         except Exception as e:
             print(f"Failed to fetch Data : {e} :  {traceback.format_exc()}")

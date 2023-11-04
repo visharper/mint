@@ -1,8 +1,33 @@
+import pandas as pd
+import numpy as np
+
 from mauka_api.stock_utils.stock_screener_backend import fetch_data
-from mauka_api.utils.date_util import get_n_past_date, get_today_date
-DEFAULT_TICKERS = [ "XOM"]
-# "TSLA", "NVDA", "RIVN", "XRX",
-DEFAULT_PERIOD = "1d"
-start_date = "2023-09-15"
-end_date = "2023-10-01"
-fetch_data(DEFAULT_TICKERS, start_date="", end_date="", interval=DEFAULT_PERIOD)
+
+sp500 = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
+# sp500_list = np.array(sp500[0]['Symbol'])
+DEFAULT_TICKERS = np.array(sp500[0]["Symbol"])
+
+# DEFAULT_TICKERS = [
+#     "TSLA",
+#     "NVDA",
+#     "RIVN",
+#     "XRX",
+#     "XOM",
+#     "BAC",
+#     "SOFI",
+#     "AI",
+#     "INTC",
+#     "GPS",
+#     "CSCO",
+#     "PLTR",
+#     "VZ",
+#     "VOD",
+#     "GOLD",
+# ]
+# DEFAULT_TICKERS = ["CSL", "NVDA", "SOFI"]
+# fetch_data(DEFAULT_TICKERS, start_date="2023-10-00 06:30:00", end_date="2023-10-16 12:30:00", interval="1h")
+# fetch_data(DEFAULT_TICKERS, start_date="2023-10-00 06:30:00", end_date="2023-10-16 13:30:00", interval="1h")
+# fetch_data(DEFAULT_TICKERS, start_date="", end_date="", interval="1h")
+DEFAULT_TICKERS = ["WTW", "VTR", "TMUS", "SO", "SBAC", "SOFI"]
+fetch_data(DEFAULT_TICKERS, start_date="", end_date="", interval="1d")
+# fetch_data(DEFAULT_TICKERS, start_date="", end_date="", interval="1wk")

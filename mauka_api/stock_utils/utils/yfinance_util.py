@@ -18,12 +18,17 @@ session.headers['User-agent'] = 'yfinance-cache/1.0'
 ssl._create_default_https_context = ssl._create_unverified_context
 
 def download_data(ticker, start_date, end_date, interval = "1d"):
-    df =  yf.download(ticker, start=start_date, end=end_date,  interval = interval)
-    # df = yf.download(tickers = ticker,  # list of tickers
-    #         period = "30d",         # time period
-    #         interval = interval,       # trading interval
-    #         prepost = False,       # download pre/post market hours data?
-    #         repair = True)         # repair obvious price errors e.g. 100x?ticker_history = yf.download(tickers = "tsla",  # list of tickers
-    df.reset_index(inplace=True)
-    return df
+    try:
+        df =  yf.download(ticker, start=start_date, end=end_date,  interval = interval)
+        # df = yf.download(tickers = ticker,  # list of tickers
+        #         period = "30d",         # time period
+        #         interval = interval,       # trading interval
+        #         prepost = False,       # download pre/post market hours data?
+        #         repair = True)         # repair obvious price errors e.g. 100x?ticker_history = yf.download(tickers = "tsla",  # list of tickers
+        df.reset_index(inplace=True)
+        return df
+    except Exception as e:
+        print("######### EXCEPTION @############# : ", e)
+        pass
+
 

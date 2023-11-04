@@ -5,13 +5,19 @@ from .views import (
     userApi,
     userDetail,
     signalDetail,
-    SignalListApiView
+    SignalListApiView,
+    backtestApi,
+    watchListApi,
+    trendsApi,
 )
 
 urlpatterns = [
-    path('', MaukaListApiView.as_view()),
-    path('user/', userApi),
-    path('user/(?P<username>.+)/$', userDetail),
-    path('signal/', signalDetail),
-    path("test/", SignalListApiView.as_view())
+    path("", MaukaListApiView.as_view()),
+    path("user/", userApi),
+    # path("user/(?P<username>.+)/$", userDetail),
+    path("signal/", signalDetail),
+    path("test/", SignalListApiView.as_view()),
+    path("backtest/", backtestApi),
+    path("watchlist/", watchListApi),
+    path("trend/", trendsApi),
 ]

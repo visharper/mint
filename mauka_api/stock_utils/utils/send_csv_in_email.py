@@ -7,7 +7,7 @@ SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = "465"
 SMTP_USERNAME = "pennies4v@gmail.com"
 SMTP_PASSWORD = "mfoxdpakyqsqezqk"
-def send_mail( file_name, subject, to, body="Sending Email from vishal_private_server"):
+def send_mail( subject, to, body="Sending Email from vishal_private_server", file_name =""):
     # Create a multipart message
     msg = MIMEMultipart()
     body_part = MIMEText(body, 'plain')
@@ -17,10 +17,11 @@ def send_mail( file_name, subject, to, body="Sending Email from vishal_private_s
     # Add body to email
     msg.attach(body_part)
     # open and read the CSV file in binary
-    with open(file_name,'rb') as file:
-    # Attach the file with filename to the email
-        msg.attach(MIMEApplication(file.read(), Name=file_name))
- 
+    if file_name:
+        with open(file_name,'rb') as file:
+        # Attach the file with filename to the email
+            msg.attach(MIMEApplication(file.read(), Name=file_name))
+    
 
     # server = smtplib.SMTP(SMTP_SERVER, 587)
     server = smtplib.SMTP_SSL(SMTP_SERVER)

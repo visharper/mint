@@ -3,6 +3,8 @@ from datetime import datetime, timezone, timedelta
 current_datetime_utc = datetime.utcnow()
 current_datetime = datetime.now()
 DEFAULT_FORMAT = "%Y-%m-%d"
+YAHOO_DATE_FORMAT = "%Y-%m-%d %H:%M:%S%z"
+DB_DATE_FORMAT = "%Y-%m-%d %H:%M:%S%f"
 
 def get_report_date(fmt = "%y%m%d%H%M%S"):
     return current_datetime.strftime(fmt)
@@ -27,3 +29,22 @@ def get_n_past_date(n: int, fmt=None):
 
 def dt_to_str(dt: datetime, fmt="%Y-%m-%d"):
     return dt.strftime(fmt)
+
+def convert_str_to_dt(dt: str, return_fmt: str = ""):
+    """
+    Converts Str to Date format and if Return format is present
+    returns date in that format
+    """
+    for fmt in (
+        YAHOO_DATE_FORMAT,
+        DEFAULT_FORMAT,
+        DB_DATE_FORMAT
+    ):
+        try:
+            converted_dt = datetime.strptime(dt, fmt)
+            if return_fmt:
+                return dt_to_str(convert_str_to_dt, return_fmt)
+            return converted_dt   
+        except ValueError:
+            pass
+    raise ValueError("no valid date format found!!")
