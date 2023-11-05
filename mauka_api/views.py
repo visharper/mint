@@ -19,6 +19,28 @@ TICKERS = "tickers"
 INTERVAL = "interval"
 
 
+from django.db import connections, connection
+from django.db import transaction
+
+
+def run_atomic(sql):
+    with transaction.atomic():  # Here
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+            for row in cursor.fetchall():
+                return row
+
+
+def execute_sql(sql):
+    cursor = connections["default"].cursor()
+    cursor.execute(sql)
+    resp = cursor.fetchall()
+    # print()
+    # manually close the cursor if you are done!
+    cursor.close()
+    return resp
+
+
 class SignalListApiView(APIView):
     def get(self, request):
         response = store_message({})
@@ -98,11 +120,32 @@ def userDetail(request, username="vishal", format=None):
 
 
 @csrf_exempt
+def trendAPI(request, format=None):
+    print("----- TREND _API -------")
+    if request.method == "GET":
+        try:
+            query = """
+                 select ms1.ticker, time_range, message
+                from mauka_api_signal ms1, 
+                    (select ticker, max(create_date) LastUpdate 
+                    from mauka_api_signal group by ticker) ms2
+                where ms1.ticker = ms2.ticker
+                and ms1.create_date = LastUpdate
+                order by ms1.ticker
+            """
+            response = execute_sql(query)
+            if response:
+                return JsonResponse(response, safe=False)
+            return JsonResponse("Failed To retreive trend", safe=False)
+        except Exception as e:
+            print("Exception occurred during trendAPI : ", e)
+
+
+@csrf_exempt
 def signalDetail(request, range=[], format=None):
     if request.method == "GET":
         try:
             today_date = get_today_date(CREATE_DATE_FORMAT, utc=True)
-            print(today_date)
             if not range:
                 range = ["2023-10-01", today_date]
             signals = Signal.objects.filter(create_date__range=range).order_by(
@@ -118,10 +161,25 @@ def signalDetail(request, range=[], format=None):
 
     elif request.method == "POST":
         req = JSONParser().parse(request)
+        ticker = req.get("ticker")
+        time_range = req.get("time_range")
+        message_type = req.get("message")
+        print(req)
+        query = (
+            "select create_date, ticker, time_range, message "
+            "from mauka_api_signal ms1, (select max(create_date) "
+            f"LastUpdate from mauka_api_signal where ticker = '{ticker}') ms2"
+            f" where ticker = '{ticker}' and ms1.create_date = LastUpdate"
+        )
+        response = run_atomic(query)
+        if response and time_range == response[2] and message_type == response[3]:
+            # Return if no change in trend
+            print(f"{ticker}-{time_range} -TREND IS SAME>>>> Quitting-")
+            return JsonResponse("Skipped the Post Request", safe=False)
         serializer = SignalSerializer(data=req)
-        print("Serializer Response : ", serializer)
         if serializer.is_valid():
             serializer.save()
+            # print(f"Added To DB Successfully : ", serializer)
             return JsonResponse("Added Successfully", safe=False)
         return JsonResponse(f"Failed To Add due to : {serializer}", safe=False)
 
@@ -199,7 +257,7 @@ class setTrends(APIView):
         """
         update_qry = f"update mauka_api_trend set {period}='{trend}', {period}_update_dt = '{update_dt}' where ticker = '{ticker}' and weekly is not '{trend}';"
         response = Trend.objects.raw(update_qry)
-        print(response)
+        # print(response)
         if response:
             return Response("Success", status=status.HTTP_200_OK)
         # # else:
@@ -208,28 +266,28 @@ class setTrends(APIView):
         # return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
-def trendsApi(request, format=None):
-    interval_map = {"1d": "daily", "1wk": "weekly", "1h": "hourly"}
-    if request.method == "POST":
-        req = JSONParser().parse(request)
-        print(f"Request Received: {req}")
-        ticker = req.get("ticker")
-        trend = req.get("trend")
-        interval = req.get("interval")
-        update_dt = get_today_date(CREATE_DATE_FORMAT, True)
-        print(f"Request Received: {req}")
-        period = interval_map[interval]
+# @csrf_exempt
+# def trendsApi(request, format=None):
+#     interval_map = {"1d": "daily", "1wk": "weekly", "1h": "hourly"}
+#     if request.method == "POST":
+#         req = JSONParser().parse(request)
+#         print(f"Request Received: {req}")
+#         ticker = req.get("ticker")
+#         trend = req.get("trend")
+#         interval = req.get("interval")
+#         update_dt = get_today_date(CREATE_DATE_FORMAT, True)
+#         print(f"Request Received: {req}")
+#         period = interval_map[interval]
 
-        """
-        {"ticker":"CSCO", "trend":"Bullish", "period":"weekly", "update_dt":""}
-        """
-        update_qry = f"""
-        update mauka_api_trend set {period}='{trend}', 
-        {period}_update_dt = '{update_dt}' 
-        where ticker = '{ticker}' and {period} is not '{trend}';
-        """
-        response = Trend.objects.raw(update_qry)
-        if response:
-            return JsonResponse(response, safe=False)
-        return JsonResponse(f"Failed To Pull Data", safe=False)
+#         """
+#         {"ticker":"CSCO", "trend":"Bullish", "period":"weekly", "update_dt":""}
+#         """
+#         update_qry = f"""
+#         update mauka_api_trend set {period}='{trend}',
+#         {period}_update_dt = '{update_dt}'
+#         where ticker = '{ticker}' and {period} is not '{trend}';
+#         """
+#         response = Trend.objects.raw(update_qry)
+#         if response:
+#             return JsonResponse(response, safe=False)
+#         return JsonResponse(f"Failed To Pull Data", safe=False)

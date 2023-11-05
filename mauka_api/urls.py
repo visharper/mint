@@ -8,7 +8,7 @@ from .views import (
     SignalListApiView,
     backtestApi,
     watchListApi,
-    trendsApi,
+    trendAPI,
 )
 
 urlpatterns = [
@@ -19,5 +19,5 @@ urlpatterns = [
     path("test/", SignalListApiView.as_view()),
     path("backtest/", backtestApi),
     path("watchlist/", watchListApi),
-    path("trend/", trendsApi),
+    path("trend/", trendAPI),
 ]

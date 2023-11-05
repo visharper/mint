@@ -20,11 +20,13 @@ RSI = CategoryEnum.RSI.value
 PRICE_ACTION = CategoryEnum.PRICE_ACTION.value
 
 
-def bullish_buy(df):
+def bullish_buy(ticker, df):
+    low = df.Low[ticker]
+    high = df.High[ticker]
     return np.where(
         (
             (
-                (df["Low"] <= df["EMA3"]) & (df["EMA3"] <= df["High"])
+                (low <= df["EMA3"]) & (df["EMA3"] <= high)
             )  # Buy price should be in range of the day
             & (df["EMA3"] >= df["SMA20"])
             & (df["EMA20"] >= df["SMA20"])

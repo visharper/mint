@@ -44,7 +44,7 @@ def store_message(msg: dict = {}):
     try:
         # sending post request and saving response as response object
         headers = {"Content-type": "application/json", "Accept": "application/json"}
-        print(f"----- ADDING REQUEST {msg}")
+        print(f"----- ADDING SIGNAL {msg}")
         r = requests.post(url=API_ENDPOINT, data=json.dumps(msg), headers=headers)
         # extracting response text
         response = r.text
