@@ -125,13 +125,13 @@ def trendAPI(request, format=None):
     if request.method == "GET":
         try:
             query = """
-                 select ms1.ticker, time_range, message
+                 select ms1.ticker, ms1.time_range, ms1.category, message
                 from mauka_api_signal ms1, 
-                    (select ticker, max(create_date) LastUpdate 
-                    from mauka_api_signal group by ticker) ms2
+                    (select ticker, category, time_range, max(create_date) LastUpdate 
+                    from mauka_api_signal group by ticker, category, time_range) ms2
                 where ms1.ticker = ms2.ticker
                 and ms1.create_date = LastUpdate
-                order by ms1.ticker
+                order by ms1.ticker;
             """
             response = execute_sql(query)
             if response:
@@ -139,6 +139,23 @@ def trendAPI(request, format=None):
             return JsonResponse("Failed To retreive trend", safe=False)
         except Exception as e:
             print("Exception occurred during trendAPI : ", e)
+    # if request.method == "GET":
+    #     try:
+    #         query = """
+    #              select ms1.ticker, time_range, category, message
+    #             from mauka_api_signal ms1,
+    #                 (select ticker, max(create_date) LastUpdate
+    #                 from mauka_api_signal group by ticker) ms2
+    #             where ms1.ticker = ms2.ticker
+    #             and ms1.create_date = LastUpdate
+    #             order by ms1.ticker
+    #         """
+    #         response = execute_sql(query)
+    #         if response:
+    #             return JsonResponse(response, safe=False)
+    #         return JsonResponse("Failed To retreive trend", safe=False)
+    #     except Exception as e:
+    #         print("Exception occurred during trendAPI : ", e)
 
 
 @csrf_exempt
@@ -152,7 +169,6 @@ def signalDetail(request, range=[], format=None):
                 "-create_date"
             )
             signal_serializer = SignalSerializer(signals, many=True)
-            pagination_class = LimitOffsetPagination
             if signal_serializer:
                 return JsonResponse(signal_serializer.data[:100], safe=False)
             return Response(f"Failed to fetch : ", status=status.HTTP_400_BAD_REQUEST)
@@ -161,25 +177,9 @@ def signalDetail(request, range=[], format=None):
 
     elif request.method == "POST":
         req = JSONParser().parse(request)
-        ticker = req.get("ticker")
-        time_range = req.get("time_range")
-        message_type = req.get("message")
-        print(req)
-        query = (
-            "select create_date, ticker, time_range, message "
-            "from mauka_api_signal ms1, (select max(create_date) "
-            f"LastUpdate from mauka_api_signal where ticker = '{ticker}') ms2"
-            f" where ticker = '{ticker}' and ms1.create_date = LastUpdate"
-        )
-        response = run_atomic(query)
-        if response and time_range == response[2] and message_type == response[3]:
-            # Return if no change in trend
-            print(f"{ticker}-{time_range} -TREND IS SAME>>>> Quitting-")
-            return JsonResponse("Skipped the Post Request", safe=False)
         serializer = SignalSerializer(data=req)
         if serializer.is_valid():
             serializer.save()
-            # print(f"Added To DB Successfully : ", serializer)
             return JsonResponse("Added Successfully", safe=False)
         return JsonResponse(f"Failed To Add due to : {serializer}", safe=False)
 

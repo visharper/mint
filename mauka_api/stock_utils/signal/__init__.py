@@ -104,32 +104,60 @@ def prepare_email_body(ticker_data: dict):
     )
 
 
+def get_last_known_trend_for_ticker(
+    trends: list, ticker: str, interval: str, category: str
+):
+    """trends is list is lists with ticker trend
+    list contain [ticker, interval, last_Trend]
+
+    Args:
+        trends (list): _description_
+        ticker (str): _description_
+        interval (str): _description_
+    """
+    for trend in trends:
+        if trend[0] == ticker and trend[1] == interval and trend[2] == category:
+            return trend[3]
+    return False
+
+
 class Signal:
-    def __init__(self, ticker, range="1d"):
+    def __init__(self, ticker, interval, trends):
         self.resp = dict()
-        self.resp[SIGNAL_TIME_RANGE] = range
+        self.resp[SIGNAL_TIME_RANGE] = interval
         self.resp[SIGNAL_TICKER] = ticker
         self.ticker = ticker
+        self.trends = trends
 
     def price_action(self, df):
         try:
             price_resp = self.resp
             price_resp[SIGNAL_CATEGORY] = "price"
+            price_resp[SIGNAL_MESSAGE] = NEUTRAL_VALUE
+            price_resp[SIGNAL_MESSAGE_TYPE] = NEUTRAL_VALUE
             message = bullish_buy(df)
-            last_row_message = message[len(message) - 1]
-            print("last_row_message ===> ", last_row_message)
-            if last_row_message:
-                price_resp[SIGNAL_MESSAGE] = last_row_message
+            new_trend = message[len(message) - 1]
+            last_trend = get_last_known_trend_for_ticker(
+                self.trends,
+                self.ticker,
+                self.resp[SIGNAL_TIME_RANGE],
+                price_resp[SIGNAL_CATEGORY],
+            )
+            if new_trend:
+                price_resp[SIGNAL_MESSAGE] = new_trend
                 price_resp[SIGNAL_MESSAGE_TYPE] = BULLISH_VALUE
-                store_message(price_resp)
                 # update_trend(price_resp)
                 # email_subject = prepare_email_body(price_resp)
                 # send_mail("Mauka Price Action Alert", MAUKA_EMAIL, email_subject)
-            else:  # Store neutral
-                price_resp[SIGNAL_MESSAGE] = NEUTRAL_VALUE
-                price_resp[SIGNAL_MESSAGE_TYPE] = NEUTRAL_VALUE
+            print(
+                self.ticker,
+                " PRICE ===> ",
+                price_resp[SIGNAL_MESSAGE],
+                " == ",
+                last_trend,
+            )
+            if not price_resp[SIGNAL_MESSAGE] == last_trend:
                 store_message(price_resp)
-            # store_message(price_resp)
             return price_resp
         except Exception as e:
             print(f"!! Exception  Found: {e}")
@@ -138,19 +166,24 @@ class Signal:
     def rsi(self, df):
         rsi_resp = self.resp
         rsi_resp[SIGNAL_CATEGORY] = RSI
+        rsi_resp[SIGNAL_MESSAGE] = NEUTRAL_VALUE
+        rsi_resp[SIGNAL_MESSAGE_TYPE] = NEUTRAL_VALUE
         message = rsi_filter(df)
-        last_row = message[len(message) - 1]
-        print("last_row_message ===> ", last_row)
-        if last_row:  # If there is any signal
-            rsi_resp[SIGNAL_MESSAGE] = last_row
+        new_trend = message[len(message) - 1]
+        last_trend = get_last_known_trend_for_ticker(
+            self.trends,
+            self.ticker,
+            self.resp[SIGNAL_TIME_RANGE],
+            rsi_resp[SIGNAL_CATEGORY],
+        )
+        if new_trend:  # If there is any signal
+            rsi_resp[SIGNAL_MESSAGE] = new_trend
             rsi_resp[SIGNAL_MESSAGE_TYPE] = BEARISH_VALUE
+
+        print(self.ticker, " RSI ===> ", rsi_resp[SIGNAL_MESSAGE], " == ", last_trend)
+        if not rsi_resp[SIGNAL_MESSAGE] == last_trend:
             store_message(rsi_resp)
             # update_trend(rsi_resp)
             # email_subject = prepare_email_body(rsi_resp)
             # send_mail("Mauka RSI  Alert", MAUKA_EMAIL, email_subject)
-        else:  # Store neutral
-            rsi_resp[SIGNAL_MESSAGE] = NEUTRAL_VALUE
-            rsi_resp[SIGNAL_MESSAGE_TYPE] = NEUTRAL_VALUE
-            store_message(rsi_resp)
-            # store_message(rsi_resp)
         return rsi_resp

@@ -28,6 +28,6 @@ S500_TICKERS_LIST = S50_TICKERS_PD_ARRAY.tolist()
 # fetch_data(DEFAULT_TICKERS, start_date="2023-10-00 06:30:00", end_date="2023-10-16 12:30:00", interval="1h")
 # fetch_data(DEFAULT_TICKERS, start_date="2023-10-00 06:30:00", end_date="2023-10-16 13:30:00", interval="1h")
 # fetch_data(DEFAULT_TICKERS, start_date="", end_date="", interval="1h")
-# DEFAULT_TICKERS = ["SO", "SOFI"]
+DEFAULT_TICKERS = ["SO", "SOFI"]
 fetch_data(S500_TICKERS_LIST, start_date="", end_date="", interval="1d")
-# fetch_data(S500_TICKERS_LIST, start_date="", end_date="", interval="1wk")
+fetch_data(S500_TICKERS_LIST, start_date="", end_date="", interval="1wk")

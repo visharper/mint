@@ -1,13 +1,18 @@
 import numpy as np
-from datetime import datetime
 from mauka_api.enums.signal import SignalEnum
-
+from mauka_api.stock_utils.utils.date_util import add_microseconds, DB_DATE_FORMAT
 
 # importing the requests library
 import requests
 import json
+import random
+from mauka_api import (
+    # Signal DB Enums
+    SIGNAL_CREATE_DATE,
+)
 
 DATETIME = SignalEnum.DATETIME.value
+
 
 # MAUKA_EMAIL = "2067506630@tmomail.net"
 MAUKA_EMAIL = "maukatheopportunity@gmail.com"
@@ -16,6 +21,19 @@ API_ENDPOINT = "http://localhost:8000/api/signal/"
 TREND_API = "http://localhost:8000/api/trend/"
 
 CATEGORIES = ["RSI", "PRICE"]
+
+
+def get_last_trend():
+    try:
+        headers = {"Content-type": "application/json", "Accept": "application/json"}
+        r = requests.get(url=TREND_API, headers=headers)
+        print("Response ==> ", r.text, type(r))
+        if r:
+            return json.loads(r.text)
+        return []
+
+    except Exception as e:
+        print("Exception Getting last Trend:", e)
 
 
 def update_trend(msg: dict = {}):
@@ -44,6 +62,9 @@ def store_message(msg: dict = {}):
     try:
         # sending post request and saving response as response object
         headers = {"Content-type": "application/json", "Accept": "application/json"}
+        random_int = random.randint(1, 1999)
+
+        msg[SIGNAL_CREATE_DATE] = add_microseconds(random_int, DB_DATE_FORMAT, True)
         print(f"----- ADDING SIGNAL {msg}")
         r = requests.post(url=API_ENDPOINT, data=json.dumps(msg), headers=headers)
         # extracting response text
