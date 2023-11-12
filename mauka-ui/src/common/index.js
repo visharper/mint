@@ -24,18 +24,22 @@ export const SIGNAL_CONF = {
   },
 };
 
+export const intervalAgeMapping = {
+  Weekly: "weekly_create_date",
+  Daily: "daily_update_date",
+};
 export const TREND_CONF = {
-  Neutral: {
+  neutral: {
     color: "gray",
     rating: "Neutral",
     trend: "Neutral",
   },
-  Bullish: {
+  bullish: {
     color: "green",
     rating: "Buy",
     trend: "Bullish",
   },
-  Bearish: {
+  bearish: {
     color: "red",
     rating: "Sell",
     trend: "Bearish",
@@ -51,4 +55,4 @@ export const periodButtonConf = {
 export const PRICE_ACTION = "TotSignal";
 export const RSI = "RSI_SIGNAL";
 export const MACD = "MACD_SIGNAL";
-export const COLS_TO_PUBLISH = ["ticker", "daily", "weekly"];
+export const COLS_TO_PUBLISH = ["ticker", "category", "Daily", "Weekly"];

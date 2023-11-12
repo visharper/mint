@@ -9,17 +9,6 @@ export const watchListSlice = createSlice({
     ticker: "",
     interval: "1d",
     signalFilters: "",
-    // signalFilters: [
-    //   { key: "message_type", value: ["Bullish"] },
-    //   {
-    //     key: "time_range",
-    //     value: ["1d"],
-    //   },
-    //   {
-    //     key: "ticker",
-    //     value: ["WMT", "GPS"],
-    //   },
-    // ],
   },
   reducers: {
     addTickerToWatchList: (state, action) => {
@@ -56,15 +45,17 @@ export const watchListSlice = createSlice({
       };
     },
     setSignalFilters: (state, { payload }) => {
-      // const oldFilters = current(state.signalFilters) || "";
-      // const filters = handleSignalFilters(oldFilters, payload);
-      console.log("Updating State to : ", payload);
-
-      state = {
-        ...state,
-        signalFilters: payload,
-      };
-      console.log("Update State to : ", state.signalFilters);
+      const currentState = current(state);
+      const oldFilters = currentState.signalFilters;
+      console.log(currentState, "has filters ", oldFilters);
+      const filters = handleSignalFilters(oldFilters, payload);
+      console.log("Updating State from : ", oldFilters, "  to   ", filters);
+      state.signalFilters = filters;
+      console.log("Updated State to : ", state.signalFilters);
+    },
+    clearSignalFilters: (state) => {
+      console.log("clearing all filters....");
+      state.signalFilters = [];
     },
   },
 });
@@ -76,6 +67,7 @@ export const {
   addTickerToBackTest,
   changeIntervalForBacktest,
   setSignalFilters,
+  clearSignalFilters,
 } = watchListSlice.actions;
 
 export default watchListSlice.reducer;

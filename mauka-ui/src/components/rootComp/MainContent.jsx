@@ -7,26 +7,23 @@ import { useSelector, useDispatch } from "react-redux";
 
 function MainContent() {
   const [tabIndex, setTabIndex] = useState(0);
-  const [defaultIndex, setDefaultIndex] = useState(0);
+  const defaultIndex = 0;
 
   const tabListMap = {
-    Signals: (active) => (
-      <SignalComp Index={0} Active={active} ChangeTab={changeTab} />
-    ),
+    Signals: (active) => <SignalComp Index={0} Active={active} />,
     WatchList: (active) => <WatchList Index={1} Active={active} />,
     BackTest: (active) => <BackTest Index={2} Active={active} />,
   };
 
-  useEffect(() => {
-    console.log("Rerendring on Tabe", defaultIndex);
-  }, [defaultIndex]);
-  const changeTab = (e) => setDefaultIndex(e.target.value);
+  useEffect(() => {}, [defaultIndex]);
 
-  const tabComps = Object.keys(tabListMap).map((key) => (
-    <Tab ActiveTabIdx={tabIndex}> {key} </Tab>
+  const tabComps = Object.keys(tabListMap).map((mapKey, index) => (
+    <Tab key={index} ActiveTabIdx={tabIndex}>
+      {mapKey}
+    </Tab>
   ));
-  const tabPanelComps = Object.values(tabListMap).map((value) => (
-    <TabPanel> {value(tabIndex)} </TabPanel>
+  const tabPanelComps = Object.values(tabListMap).map((value, index) => (
+    <TabPanel key={index}> {value(tabIndex)} </TabPanel>
   ));
 
   const onTabClicked = (e) => setTabIndex(e);

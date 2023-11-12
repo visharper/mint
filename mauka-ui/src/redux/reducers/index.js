@@ -10,14 +10,27 @@ export const handleSignalFilters = (activeFilters, payload) => {
        {column_name: filter}
     */
   const { field, value } = payload;
+  if (value === "") {
+    return activeFilters.filter((item) => item.field !== field);
+  }
+  let newFilters = [];
   if (activeFilters.length === 0) {
     return [payload];
   } else {
-    const updatedFilters = activeFilters.map((item) => {
-      const newItem = item.key === field ? { [field]: value } : item;
-      return newItem;
+    let existingField = false;
+    newFilters = activeFilters.map((item) => {
+      if (item.field === field) {
+        const newItem = { field, value: value.replaceAll(" ", "").split(",") };
+        existingField = true;
+        return newItem;
+      }
+      return item;
     });
-    console.log("updatedFilters ====>", updatedFilters);
-    return updatedFilters;
+    return !existingField
+      ? [
+          ...activeFilters,
+          { field, value: value.replaceAll(" ", "").split(",") },
+        ]
+      : newFilters;
   }
 };
