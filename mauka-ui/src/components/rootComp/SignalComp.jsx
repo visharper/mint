@@ -34,12 +34,9 @@ function SignalComp(props) {
 
   const filterMulti = useCallback(
     (data, filters, page = 1) => {
-      console.log("Multi filter applied ", data, filters);
       let filteredData = data;
       for (let filterMap of filters) {
-        console.log(filteredData, "  Applying filter ", filterMap);
         filteredData = filterUsingMap(filteredData, filterMap);
-        console.log("Applyied filter data  ", filteredData);
       }
       const rowStartIdx = page === 1 ? 1 : (page - 1) * pageLimit + 1;
       const rowEndIdx = page === 1 ? 101 : page * pageLimit + 1;
@@ -78,34 +75,13 @@ function SignalComp(props) {
   return (
     <Box>
       <Box>
-        {/* <Button onClick={(e) => ChangeTab(e)} value={2}>
-          BackTest
-        </Button> */}
         <FormControl isRequired>
           <HStack spacing="24px">
             <Filters IsClearValue={clearFilter} />
-            {/* <Box p="0.5rem">Apply Ticker Filter: </Box>
-            <Box p="0.5rem">
-              <Input
-                placeholder="Ticker"
-                value={filterValue}
-                name="ticker"
-                onChange={handleFilter}
-              />{" "}
-            </Box> */}
             <Button variant="brandPrimary" onClick={applySignalFilters}>
               Apply Filter
             </Button>
             <Button onClick={handleClearFilter}>Clear Filter</Button>
-
-            {/* <Box>
-              <Input
-                placeholder="Interval"
-                value={filterValue}
-                name="interval"
-                onChange={handleMultiFilter}
-              />
-            </Box> */}
           </HStack>
         </FormControl>
       </Box>
