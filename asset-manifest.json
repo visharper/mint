@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/mint.github.io/static/css/main.f8a9f16f.css",
-    "main.js": "/mint.github.io/static/js/main.8119267d.js",
+    "main.css": "/mint.github.io/main.f8a9f16f.css",
+    "main.js": "/mint.github.io/main.8119267d.js",
     "index.html": "/mint.github.io/index.html",
-    "main.f8a9f16f.css.map": "/mint.github.io/static/css/main.f8a9f16f.css.map",
-    "main.8119267d.js.map": "/mint.github.io/static/js/main.8119267d.js.map"
+    "main.f8a9f16f.css.map": "/mint.github.io/main.f8a9f16f.css.map",
+    "main.8119267d.js.map": "/mint.github.io/main.8119267d.js.map"
   },
   "entrypoints": [
-    "static/css/main.f8a9f16f.css",
-    "static/js/main.8119267d.js"
+    "main.f8a9f16f.css",
+    "main.8119267d.js"
   ]
 }
